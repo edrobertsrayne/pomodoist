@@ -1,11 +1,29 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import { TodoistApi } from '@doist/todoist-api-typescript';
+	import { env } from '$env/dynamic/public';
+
+	const api = new TodoistApi(env.PUBLIC_TODOIST_API_TOKEN);
+
+	api
+		.getProjects()
+		.then((projects) => {
+			console.log(projects);
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+
+	api
+		.getTasks()
+		.then((tasks) => console.log(tasks))
+		.catch((error) => console.log(error));
 
 	let timeLeft = 25 * 60;
 	let duration = 25 * 60;
 	let isRunning = false;
 	let isBreak = false;
-	let interval: number;
+	let interval;
 
 	const POMODORO_TIME = 25 * 60;
 	const SHORT_BREAK_TIME = 5 * 60;
