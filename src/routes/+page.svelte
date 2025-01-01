@@ -1,18 +1,18 @@
-<script>
+<script lang="ts">
 	import { onDestroy } from 'svelte';
 
 	let timeLeft = 25 * 60;
 	let duration = 25 * 60;
 	let isRunning = false;
 	let isBreak = false;
-	let interval;
+	let interval: number;
 
 	const POMODORO_TIME = 25 * 60;
 	const SHORT_BREAK_TIME = 5 * 60;
 	const LONG_BREAK_TIME = 15 * 60;
 	let pomodoroCount = 0;
 
-	function formatTime(seconds) {
+	function formatTime(seconds: number): string {
 		const minutes = Math.floor(seconds / 60);
 		const secondsRemaining = seconds % 60;
 		return `${minutes.toString().padStart(2, '0')}:${secondsRemaining.toString().padStart(2, '0')}`;
@@ -75,17 +75,6 @@
 	});
 </script>
 
-<div class="navbar mb-8 bg-primary text-primary-content">
-	<div class="flex-1">
-		<btn class="btn btn-ghost text-xl">Pomodoist</btn>
-	</div>
-	<div class="flex-none">
-		<ul class="menu menu-horizontal px-1">
-			<li><a href="#" aria-label="Settings">Settings</a></li>
-			<li><a href="#" aria-label="Login">Login</a></li>
-		</ul>
-	</div>
-</div>
 <div class="flex justify-center">
 	<div class="card w-120 bg-base-100 shadow-xl">
 		<div class="card-body">
