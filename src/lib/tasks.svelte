@@ -37,31 +37,26 @@
 	let tasks = $state<Task[]>([]);
 	let projects = $state<Project[]>([]);
 
-	onMount(async () => {
+	async function fetchTasks() {
 		tasks = await api.getTasks();
 		projects = await api.getProjects();
-	});
 
-	// calculate urgency for each task
-	let tasksWithUrgency = $derived(
-		tasks.map((task) => ({
-			...task,
-			urgency: calculateUrgency(task)
-		}))
-	);
+		tasks = tasks
+			.map((task) => ({
+				...task,
+				urgency: calculateUrgency(task)
+			}))
+			.sort((a, b) => b.urgency - a.urgency);
+	}
 
-	let tasksSortedByUrgency = $derived([...tasksWithUrgency].sort((a, b) => b.urgency - a.urgency));
-
-	$effect(() => {
-		console.log(tasksSortedByUrgency);
-	});
+	onMount(() => fetchTasks());
 </script>
 
 <section class="mx-auto w-120 py-4">
 	<h1 class="card-title">Tasks</h1>
-	{#each tasksSortedByUrgency as task}
+	{#each tasks as task}
 		{#if !task.isCompleted}
-			<div id={task.id} class="my-4 flex rounded-lg bg-neutral text-neutral-content">
+			<div id={task.id} class="my-4 flex rounded-lg bg-base-200 text-base-content">
 				<div class="flex-none p-4">
 					<input class="checkbox" type="checkbox" />
 				</div>

@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import catppuccin from '@catppuccin/daisyui';
+
 export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
@@ -10,6 +13,11 @@ export default {
 	},
 	plugins: [require('daisyui')],
 	daisyui: {
-		logs: false
+		logs: false,
+		themes: [
+			catppuccin('latte', { primary: 'flamingo' }),
+			catppuccin('mocha', { primary: 'flamingo' })
+		],
+		darkTheme: 'mocha'
 	}
 };
