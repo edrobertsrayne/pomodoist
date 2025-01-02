@@ -1,18 +1,32 @@
 <script lang="ts">
-	import { tasks, projects } from './todoist';
+	import { onMount } from 'svelte';
+	import { fetchTasks, type Task } from './todoist';
+
+	let tasks = $state<Task[]>([]);
 
 	let tasksPerPage = $state(5);
 	let currentPage = $state(1);
-
 	let totalPages = $derived(Math.ceil(tasks.length / tasksPerPage));
 
 	let paginatedTasks = $derived.by(() => {
+		let filtered = [...tasks];
+		// apply filters
+		filtered = filtered.filter((task) => !task.isCompleted);
+
+		// sort
+		let sorted = filtered.sort((a, b) => b.urgency - a.urgency);
+
+		// apply pagination
 		const start = (currentPage - 1) * tasksPerPage;
 		const end = start + tasksPerPage;
-		return tasks.slice(start, end);
+		return sorted.slice(start, end);
 	});
 
 	let projectDialog;
+
+	onMount(async () => {
+		tasks = await fetchTasks();
+	});
 </script>
 
 <section class="mx-auto w-120 py-4">
