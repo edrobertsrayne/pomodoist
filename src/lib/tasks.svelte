@@ -56,11 +56,9 @@
 	<h1 class="card-title">Tasks</h1>
 	{#each tasks as task}
 		{#if !task.isCompleted}
-			<div id={task.id} class="my-4 flex rounded-lg bg-base-200 text-base-content">
-				<div class="flex-none p-4">
-					<input class="checkbox" type="checkbox" />
-				</div>
-				<div class="flex-1 py-4 align-middle">{task.content}</div>
+			<div id={task.id} class="alert my-4">
+				<input class="checkbox-primary checkbox" type="checkbox" />
+				<span>{task.content}</span>
 			</div>
 		{/if}
 	{/each}
