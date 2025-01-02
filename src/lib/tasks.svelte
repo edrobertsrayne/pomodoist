@@ -1,65 +1,57 @@
 <script lang="ts">
-	import { TodoistApi, type Task, type Project } from '@doist/todoist-api-typescript';
-	import { env } from '$env/dynamic/public';
-	import { onMount } from 'svelte';
+	import { tasks, projects } from './todoist';
 
-	const api = new TodoistApi(env.PUBLIC_TODOIST_API_TOKEN);
+	let tasksPerPage = $state(5);
+	let currentPage = $state(1);
 
-	function calculateDaysUntilDue(dueDate: string): number {
-		const due = new Date(dueDate);
-		const now = new Date();
+	let totalPages = $derived(Math.ceil(tasks.length / tasksPerPage));
 
-		const differenceInMillis = due.getTime() - now.getTime();
-		return Math.floor(differenceInMillis / (1000 * 60 * 60 * 24));
-	}
+	let paginatedTasks = $derived.by(() => {
+		const start = (currentPage - 1) * tasksPerPage;
+		const end = start + tasksPerPage;
+		return tasks.slice(start, end);
+	});
 
-	function calculateUrgency(task: Task): number {
-		let urgency = 0;
-
-		// calculate urgency based on due date
-		if (task.due?.date) {
-			const due = calculateDaysUntilDue(task.due.date);
-			if (due <= -7) {
-				urgency += 12;
-			} else if (due >= 14) {
-				urgency += 2.4;
-			} else {
-				urgency += 12 - 0.4571 * (due + 6);
-			}
-		}
-
-		// calculate ugency based on priority
-		urgency += (task.priority - 1) * 2;
-
-		return urgency;
-	}
-
-	let tasks = $state<Task[]>([]);
-	let projects = $state<Project[]>([]);
-
-	async function fetchTasks() {
-		tasks = await api.getTasks();
-		projects = await api.getProjects();
-
-		tasks = tasks
-			.map((task) => ({
-				...task,
-				urgency: calculateUrgency(task)
-			}))
-			.sort((a, b) => b.urgency - a.urgency);
-	}
-
-	onMount(() => fetchTasks());
+	let projectDialog;
 </script>
 
 <section class="mx-auto w-120 py-4">
-	<h1 class="card-title">Tasks</h1>
-	{#each tasks as task}
-		{#if !task.isCompleted}
-			<div id={task.id} class="alert my-4">
-				<input class="checkbox-primary checkbox" type="checkbox" />
-				<span>{task.content}</span>
-			</div>
-		{/if}
+	<div class="navbar">
+		<div class="flex-1 text-xl font-bold text-primary">Tasks</div>
+		<div class="flex-none">
+			<div onclick={() => projectDialog.showModal()} class="btn btn-ghost m-1">Projects</div>
+		</div>
+	</div>
+	{#each paginatedTasks as task}
+		<div id={task.id} class="alert my-4">
+			<input class="checkbox-primary checkbox" type="checkbox" />
+			<span>{task.content}</span>
+		</div>
 	{/each}
+	<div class="flex">
+		<div class="join flex-none">
+			<button disabled={currentPage <= 1} class="btn join-item" onclick={() => currentPage--}
+				>«</button
+			>
+			<button class="btn join-item">Page {currentPage}</button>
+			<button
+				disabled={currentPage >= totalPages}
+				class="btn join-item"
+				onclick={() => currentPage++}>»</button
+			>
+		</div>
+		<div class="flex-1"></div>
+		<select bind:value={tasksPerPage} class="select flex-none">
+			{#each [5, 10, 15, 20, 25] as option}
+				<option value={option} selected={option === tasksPerPage}>{option} per page</option>
+			{/each}
+		</select>
+	</div>
 </section>
+
+<dialog bind:this={projectDialog} class="modal">
+	<div class="modal-box">
+		<h3 class="text-lg font-bold">Select Projects</h3>
+		<div class="modal-action"><form method="dialog"><button class="btn">Close</button></form></div>
+	</div>
+</dialog>
