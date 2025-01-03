@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import Tasks from '$lib/tasks.svelte';
+	import { user } from '$lib/firebase';
 
 	let timeLeft = $state(25 * 60);
 	let duration = timeLeft.valueOf();
@@ -98,4 +99,6 @@
 	</div>
 </div>
 
-<Tasks />
+{#if $user}
+	<Tasks />
+{/if}
