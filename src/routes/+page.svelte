@@ -2,12 +2,13 @@
 	import { onDestroy } from 'svelte';
 	import Tasks from '$lib/tasks.svelte';
 	import { user } from '$lib/firebase';
+	import { page } from '$app/state';
 
 	let timeLeft = $state(25 * 60);
 	let duration = timeLeft.valueOf();
 	let isRunning = $state(false);
 	let isBreak = $state(false);
-	let interval;
+	let interval = null;
 
 	const POMODORO_TIME = 25 * 60;
 	const SHORT_BREAK_TIME = 5 * 60;
@@ -90,9 +91,9 @@
 			></progress>
 			<div class="card-actions justify-center">
 				{#if isRunning}
-					<button on:click={pauseTimer} class="btn btn-primary">Pause Timer</button>
+					<button onclick={pauseTimer} class="btn btn-primary">Pause Timer</button>
 				{:else}
-					<button on:click={startTimer} class="btn btn-primary">Start Timer</button>
+					<button onclick={startTimer} class="btn btn-primary">Start Timer</button>
 				{/if}
 			</div>
 		</div>
@@ -100,5 +101,12 @@
 </div>
 
 {#if $user}
-	<Tasks />
+	{#if page.data.isConnectedTodoist}
+		<Tasks />
+	{:else}<div class="flex justify-center py-8">
+			<div class="btn-large btn btn-outline btn-primary">
+				<a href="/auth/todoist">Connect to Todoist</a>
+			</div>
+		</div>
+	{/if}
 {/if}

@@ -1,12 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { fetchTasks, type Task } from './todoist';
-
-	let tasks = $state<Task[]>([]);
+	import { page } from '$app/state';
 
 	let tasksPerPage = $state(5);
 	let currentPage = $state(1);
-	let totalPages = $derived(Math.ceil(tasks.length / tasksPerPage));
+	let totalPages = $derived(Math.ceil(page.data.tasks.length / tasksPerPage));
 	let sortOption = $state('urgency-desc');
 	let sortOptions = [
 		{ value: 'urgency-desc', label: 'Urgency' },
@@ -16,8 +13,8 @@
 		{ value: 'date-asc', label: 'Date added' },
 		{ value: 'prioriy-desc', label: 'Priority' }
 	];
-	let paginatedTasks = $derived.by(() => {
-		let filtered = [...tasks];
+	let tasks = $derived.by(() => {
+		let filtered = [...page.data.tasks];
 		// apply filters
 		filtered = filtered.filter((task) => !task.isCompleted);
 
@@ -62,10 +59,6 @@
 	});
 
 	let projectDialog: HTMLDialogElement;
-
-	onMount(async () => {
-		tasks = await fetchTasks();
-	});
 </script>
 
 <section class="mx-auto w-120 py-4">
@@ -80,7 +73,7 @@
 			{/each}
 		</select>
 	</div>
-	{#each paginatedTasks as task}
+	{#each tasks as task}
 		<div id={task.id} class="alert my-4">
 			<input class="checkbox-primary checkbox" type="checkbox" />
 			<span>{task.content}</span>

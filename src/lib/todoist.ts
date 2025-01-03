@@ -1,7 +1,4 @@
-import { env } from '$env/dynamic/public';
 import { TodoistApi, type Project, type Task as BaseTask } from '@doist/todoist-api-typescript';
-
-const api = new TodoistApi(env.PUBLIC_TODOIST_API_TOKEN);
 
 export type Task = BaseTask & { urgency: number };
 
@@ -34,7 +31,12 @@ function calculateUrgency(task: BaseTask): number {
 	return urgency;
 }
 
-export async function fetchTasks(): Promise<Task[]> {
+export async function fetchTasks(accessToken: string): Promise<Task[]> {
+	if (!accessToken) {
+		return <Task[]>[];
+	}
+
+	const api = new TodoistApi(accessToken);
 	const tasks: BaseTask[] = await api.getTasks();
 
 	return tasks.map((task) => ({
