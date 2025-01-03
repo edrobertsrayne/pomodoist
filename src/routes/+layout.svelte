@@ -24,7 +24,7 @@
 
 <nav class="navbar mb-8 bg-primary text-primary-content">
 	<div class="flex-1">
-		<btn class="btn btn-ghost text-xl">Pomodoist</btn>
+		<btn class="btn btn-ghost text-xl"><a href="/">🍅 Pomodoist</a></btn>
 	</div>
 	<div class="flex-none">
 		<ul class="menu menu-horizontal px-1">
