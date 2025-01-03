@@ -17,7 +17,7 @@ export default {
 		themes: [
 			catppuccin('latte', { primary: 'flamingo' }),
 			catppuccin('mocha', { primary: 'flamingo' })
-		],
-		darkTheme: 'mocha'
+		]
+		// darkTheme: 'mocha'
 	}
 };
