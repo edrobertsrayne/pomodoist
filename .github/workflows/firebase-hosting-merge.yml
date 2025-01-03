@@ -19,6 +19,6 @@ jobs:
           channelId: live
           projectId: pomodoist-ea445
         env:
-          TODOIST_CLIENT_ID: { { secrets.TODOIST_CLIENT_ID } }
-          TODOIST_CLIENT_SECRET: { { secrets.TODOIST_CLIENT_SECRET } }
+          TODOIST_CLIENT_ID: ${{ secrets.TODOIST_CLIENT_ID }}
+          TODOIST_CLIENT_SECRET: ${{ secrets.TODOIST_CLIENT_SECRET }}
           FIREBASE_CLI_EXPERIMENTS: webframeworks
