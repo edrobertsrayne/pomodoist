@@ -1,7 +1,7 @@
 <script lang="ts">
 	import 'tailwindcss/tailwind.css';
 	import '../app.css';
-	import Theme from './theme.svelte';
+	import Theme from '$lib/components/Theme.svelte';
 	import { theme } from '$lib/stores';
 	let { children } = $props();
 
