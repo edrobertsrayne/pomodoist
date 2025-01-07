@@ -1,4 +1,4 @@
-import { fetchTasks } from '$lib/todoist';
+import { fetchTasks, fetchProjects } from '$lib/todoist';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
@@ -6,6 +6,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
 	return {
 		isConnectedTodoist: todoist_access_token ? true : false,
-		tasks: await fetchTasks(todoist_access_token ? todoist_access_token : '')
+		tasks: await fetchTasks(todoist_access_token ? todoist_access_token : ''),
+		projects: await fetchProjects(todoist_access_token ? todoist_access_token : '')
 	};
 };

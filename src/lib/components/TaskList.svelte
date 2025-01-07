@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import ProjectFilter from './ProjectFilter.svelte';
 
 	let tasksPerPage = $state(5);
 	let currentPage = $state(1);
@@ -13,10 +14,14 @@
 		{ value: 'date-asc', label: 'Date added' },
 		{ value: 'prioriy-desc', label: 'Priority' }
 	];
+	let projects = page.data.projects;
+	let projectFilter = $state(projects.map((project) => project.id));
+
 	let tasks = $derived.by(() => {
 		let filtered = [...page.data.tasks];
 		// apply filters
 		filtered = filtered.filter((task) => !task.isCompleted);
+		filtered = filtered.filter((task) => projectFilter.includes(task.projectId));
 
 		// sort
 		let sorted = [...filtered].sort((a, b) => {
@@ -57,15 +62,13 @@
 		const end = start + tasksPerPage;
 		return sorted.slice(start, end);
 	});
-
-	let projectDialog: HTMLDialogElement;
 </script>
 
 <section class="mx-auto w-120 py-4">
 	<div class="navbar">
 		<div class="flex-1 text-xl font-bold text-primary">Tasks</div>
 		<div class="flex-none">
-			<button onclick={() => projectDialog.showModal()} class="btn btn-ghost m-1">Projects</button>
+			<ProjectFilter bind:selection={projectFilter} />
 		</div>
 		<select bind:value={sortOption} class="select max-w-xs flex-none">
 			{#each sortOptions as option}
@@ -99,10 +102,3 @@
 		</select>
 	</div>
 </section>
-
-<dialog bind:this={projectDialog} class="modal">
-	<div class="modal-box">
-		<h3 class="text-lg font-bold">Select Projects</h3>
-		<div class="modal-action"><form method="dialog"><button class="btn">Close</button></form></div>
-	</div>
-</dialog>

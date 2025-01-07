@@ -45,6 +45,10 @@ export async function fetchTasks(accessToken: string): Promise<Task[]> {
 	}));
 }
 
-export async function fetchProjects(): Promise<Project[]> {
+export async function fetchProjects(accessToken: string): Promise<Project[]> {
+	if (!accessToken) {
+		return <Project[]>[];
+	}
+	const api = new TodoistApi(accessToken);
 	return await api.getProjects();
 }
